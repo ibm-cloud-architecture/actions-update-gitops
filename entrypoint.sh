@@ -29,9 +29,9 @@ for COMPONENT in ${COMPONENTS[@]}; do
 
   LATEST_VER_URL=${REGISTRY_URL/__IMAGE_NAME__/${IMAGE_NAME}}
   #Get latest tag, formatted for greatest semantic version value with explicit format of X.Y.Z only
-  LATEST_VER_TAG=$(curl --silent ${LATEST_VER_URL} | jq -r '.[] | select(.name|test("^[0-9].[0-9].[0-9]$")) | .name' | sort -V | tail -n1)
+  LATEST_VER_TAG=$(curl --silent ${LATEST_VER_URL} | jq -r '.[] | select(.name|test("^[0-9]*.[0-9]*.[0-9]*$")) | .name' | sort -V | tail -n1)
   echo "Calculated latest tag: ${LATEST_VER_TAG}"
-  
+
   ## TODO REFACTOR TO USE yq SINCE WE ARE RUNNING IN CONTAINER
   IMAGE_TAG_PATTERN="s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
