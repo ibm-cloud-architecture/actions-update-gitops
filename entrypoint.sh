@@ -2,18 +2,12 @@
 
 REGISTRY_URL="https://registry.hub.docker.com/v1/repositories/__IMAGE_NAME__/tags"
 
-##TODO## Explode into CSL for 'input'
-COMPONENTS=(
-  fleetms
-  kc-ui
-  ordercommandms
-  orderqueryms
-  reefersimulator
-  springcontainerms
-  voyagesms
-)
+shopt -s nullglob
+COMPONENTS=(*/)
+shopt -u nullglob # Turn off nullglob to make sure it doesn't interfere with anything later
 
 for COMPONENT in ${COMPONENTS[@]}; do
+
   echo "Updating GitOps YAMLs for '${COMPONENT}'"
   IMAGE_NAME=$(cat ${COMPONENT}/templates/deployment.yaml | grep "image:" | sed 's/.*image\: \"//' | sed 's/\:.*$//')
   echo "Calculated image name: ${IMAGE_NAME}"
@@ -29,11 +23,9 @@ for COMPONENT in ${COMPONENTS[@]}; do
   #####
   ## TODO REFACTOR TO USE yq SINCE WE ARE RUNNING IN CONTAINER
   #####
-  REPO_NAME=ibmcase
-  #ALTERNATIVE: REPO_NAME=$(echo $IMAGE_NAME | sed 's/\(.*\)\/.*/\1/')
+  REPO_NAME=$(echo $IMAGE_NAME | sed 's/\(.*\)\/.*/\1/')
   # Split {REPO_NAME}/{IMAGE_NAME} into only {IMAGE_NAME}
   IMAGE_SHORT_NAME=${IMAGE_NAME/${REPO_NAME}\//""}
-  #ALTERNATIVE: IMAGE_SHORT_NAME=$(echo $IMAGE_NAME | sed 's/.*\/\(.*\)\:.*/\1/')
 
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
   sed -i "" -e "s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/" ${COMPONENT}/templates/deployment.yaml
