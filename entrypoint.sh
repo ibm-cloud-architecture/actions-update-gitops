@@ -8,6 +8,9 @@ shopt -u nullglob # Turn off nullglob to make sure it doesn't interfere with any
 
 for COMPONENT in ${COMPONENTS[@]}; do
 
+  # Remove trailing slash
+  COMPONENT=${COMPONENT/\//""}
+
   echo "Updating GitOps YAMLs for '${COMPONENT}'"
   IMAGE_NAME=$(cat ${COMPONENT}/templates/deployment.yaml | grep "image:" | sed 's/.*image\: \"//' | sed 's/\:.*$//')
   echo "Calculated image name: ${IMAGE_NAME}"
