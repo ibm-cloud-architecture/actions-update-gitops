@@ -27,13 +27,16 @@ for COMPONENT in ${COMPONENTS[@]}; do
   ## TODO REFACTOR TO USE yq SINCE WE ARE RUNNING IN CONTAINER
   #####
   REPO_NAME=$(echo $IMAGE_NAME | sed 's/\(.*\)\/.*/\1/')
+  echo "Calculated image repository: ${REPO_NAME}"
+
   # Split {REPO_NAME}/{IMAGE_NAME} into only {IMAGE_NAME}
   IMAGE_SHORT_NAME=${IMAGE_NAME/${REPO_NAME}\//""}
+  echo "Calculated image short name: ${IMAGE_SHORT_NAME}"
 
   echo ""
   echo "${COMPONENT}/templates/deployment.yaml"
   echo ""
-  cat ${COMPONENT}/templates/deployment.yaml
+  echo "s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
   echo ""
 
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
