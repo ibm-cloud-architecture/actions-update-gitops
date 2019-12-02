@@ -30,6 +30,12 @@ for COMPONENT in ${COMPONENTS[@]}; do
   # Split {REPO_NAME}/{IMAGE_NAME} into only {IMAGE_NAME}
   IMAGE_SHORT_NAME=${IMAGE_NAME/${REPO_NAME}\//""}
 
+  echo ""
+  echo "${COMPONENT}/templates/deployment.yaml"
+  echo ""
+  cat ${COMPONENT}/templates/deployment.yaml
+  echo ""
+
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
   sed -i "" -e "s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/" ${COMPONENT}/templates/deployment.yaml
   #####
