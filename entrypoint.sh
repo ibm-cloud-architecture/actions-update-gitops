@@ -15,13 +15,14 @@ for COMPONENT in ${COMPONENTS[@]}; do
   IMAGE_NAME=$(cat ${COMPONENT}/templates/deployment.yaml | grep "image:" | sed 's/.*image\: \"//' | sed 's/\:.*$//')
   echo "Calculated image name: ${IMAGE_NAME}"
 
-  CURRENT_VER_TAG=$(cat ${COMPONENT}/templates/deployment.yaml | grep "image:" | grep --only-matching -e "[0-9]*\.[0-9]*\.[0-9]*")
+  CURRENT_VER_TAG=$(cat ${COMPONENT}/templates/deployment.yaml | grep "image:" | grep --only-matching -e "[Vv]\?[0-9]*\.[0-9]*\.[0-9]*")
   echo "Calculated current tag: ${CURRENT_VER_TAG}"
 
   LATEST_VER_URL=${REGISTRY_URL/__IMAGE_NAME__/${IMAGE_NAME}}
   #Get latest tag, formatted for greatest semantic version value
   LATEST_VER_TAG=$(curl --silent ${LATEST_VER_URL} | jq -r '.[] | select(.name|test("[0-9].[0-9].[0-9]")) | .name' | sort -V | tail -n1)
   echo "Calculated latest tag: ${LATEST_VER_TAG}"
+  ###TODO This does not support "1.0.0" being greater than "v0.1.0" currently
 
   #####
   ## TODO REFACTOR TO USE yq SINCE WE ARE RUNNING IN CONTAINER
@@ -32,12 +33,6 @@ for COMPONENT in ${COMPONENTS[@]}; do
   # Split {REPO_NAME}/{IMAGE_NAME} into only {IMAGE_NAME}
   IMAGE_SHORT_NAME=${IMAGE_NAME/${REPO_NAME}\//""}
   echo "Calculated image short name: ${IMAGE_SHORT_NAME}"
-
-  echo ""
-  echo "${COMPONENT}/templates/deployment.yaml"
-  echo ""
-  echo "s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
-  echo ""
 
   IMAGE_TAG_PATTERN="s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
