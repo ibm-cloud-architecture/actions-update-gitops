@@ -39,13 +39,17 @@ for COMPONENT in ${COMPONENTS[@]}; do
   echo "s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
   echo ""
 
+  IMAGE_TAG_PATTERN="s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
-  sed -i "" -e "s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/" ${COMPONENT}/templates/deployment.yaml
+  #sed -i "" -e ${IMAGE_TAG_PATTERN} ${COMPONENT}/templates/deployment.yaml
+  sed --in-place --expression ${IMAGE_TAG_PATTERN} ${COMPONENT}/templates/deployment.yaml
+  #sed -i'NoExtensionGiven' "expression" filename AnotherFileName.
+
   #####
   ## END TODO REFACTOR
   #####
 
-  cat ${COMPONENT}/templates/deployment.yaml
+  #cat ${COMPONENT}/templates/deployment.yaml
 
   echo ""
 done
