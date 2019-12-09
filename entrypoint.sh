@@ -35,7 +35,13 @@ for COMPONENT in ${COMPONENTS[@]}; do
   ## TODO REFACTOR TO USE yq SINCE WE ARE RUNNING IN CONTAINER
   IMAGE_TAG_PATTERN="s/${IMAGE_SHORT_NAME}\:${CURRENT_VER_TAG}/${IMAGE_SHORT_NAME}\:${LATEST_VER_TAG}/"
   # Replace current version (in the pattern of kcontainer-ui:X.Y.Z)
-  sed --in-place --expression ${IMAGE_TAG_PATTERN} ${COMPONENT}/templates/deployment.yaml
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' -e ${IMAGE_TAG_PATTERN} ${COMPONENT}/templates/deployment.yaml
+  else
+    sed --in-place --expression ${IMAGE_TAG_PATTERN} ${COMPONENT}/templates/deployment.yaml
+  fi
+
+
 
   echo ""
 done
