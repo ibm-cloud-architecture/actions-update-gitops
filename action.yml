@@ -1,6 +1,11 @@
 name: 'Update GitOps'
 description: 'Update the deployment information for a GitOps-based deployment strategy'
 author: 'osowski'
+inputs:
+  filePath:
+    description: 'File path, which is relative to the component, that will be searched for Docker image version replacement.'
+    required: false
+    default: 'templates/deployment.yaml'
 runs:
   using: 'docker'
   image: 'Dockerfile'
